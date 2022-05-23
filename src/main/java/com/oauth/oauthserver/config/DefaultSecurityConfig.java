@@ -6,14 +6,17 @@ import com.oauth.oauthserver.service.CustomAuthenticationProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
+@Configuration
 public class DefaultSecurityConfig {
 
     @Autowired
@@ -41,13 +44,16 @@ public class DefaultSecurityConfig {
 
     // 수동으로 넣는 부분이라 추후 삭제
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     UserRepository userRepository;
     @Bean
     public UserDetailsService users() {
         User user = new User();
         user.setClientId("admin");
         user.setId(1L);
-        user.setClientSecret("$2a$10$6CW1agMzVzBhxDzK0PcxrO/cQcmN9h8ZriVEPy.6DJbVeyATG5mWe"); //admin
+        user.setClientSecret(passwordEncoder.encode("admin")); //admin $2a$10$6CW1agMzVzBhxDzK0PcxrO/cQcmN9h8ZriVEPy.6DJbVeyATG5mWe
         user.setRole("admin");
 
         userRepository.save(user);
